@@ -8,7 +8,7 @@ html {
 
 .app-container {
   display: grid;
-  grid-template-columns: 160px 160px 1fr;
+  grid-template-columns: 180px 180px 1fr;
   grid-template-rows: 1fr;
   grid-template-areas: "nav sub-nav main";
 }
