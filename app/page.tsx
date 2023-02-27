@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  HTMLAttributes,
-  HtmlHTMLAttributes,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { SVGProps, useEffect, useRef, useState } from "react";
 
 const sectionTitles = [
   "About",
@@ -83,7 +77,7 @@ const SubNav: React.FC<{ sectionTitles: string[]; currentSection: string }> = ({
   const [searchValue, setSearchValue] = useState("");
 
   const filteredSections = sectionTitles.filter((title) =>
-    title.toLowerCase().includes(searchValue.toLowerCase())
+    title.toLowerCase().includes(searchValue.toLowerCase().trim())
   );
 
   return (
@@ -92,6 +86,7 @@ const SubNav: React.FC<{ sectionTitles: string[]; currentSection: string }> = ({
       <TextInput
         value={searchValue}
         onChange={(e) => setSearchValue((e.target as HTMLInputElement).value)}
+        onButtonClick={() => setSearchValue("")}
       />
       {filteredSections.map((title) => {
         return (
@@ -110,17 +105,55 @@ const SubNav: React.FC<{ sectionTitles: string[]; currentSection: string }> = ({
   );
 };
 
-const TextInput: React.FC<React.HTMLProps<HTMLInputElement>> = ({
-  ...props
-}) => {
+const TextInput: React.FC<
+  { onButtonClick: Function } & React.HTMLProps<HTMLInputElement>
+> = ({ onButtonClick, ...props }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
-    <div className="w-[90%] rounded-sm border border-slate-400/60 h-[2rem]">
+    <div className="w-[90%] rounded-sm border border-slate-400/60 h-[2rem] relative">
       <input
         {...props}
         type="text"
         className=" indent-1 text-sm h-full w-full border-none text-black/80"
         placeholder="Pesquisar"
+        maxLength={25}
+        ref={inputRef}
       />
+      {(props.value as string).length > 0 && (
+        <button
+          tabIndex={0}
+          className="w-[1.2rem] h-[1.2rem] rounded-[.6rem] centered-items absolute right-1 top-[6px] bg-slate-500/50 hover:bg-slate-500/80"
+          onClick={() => {
+            onButtonClick();
+            inputRef.current?.focus();
+          }}
+        >
+          <DeleteIcon />
+        </button>
+      )}
     </div>
+  );
+};
+
+// Create SVG for a delete icon
+const DeleteIcon: React.FC<SVGProps<SVGSVGElement>> = ({ ...props }) => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-6 w-6"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="#fff"
+      transform="scale(0.76)"
+      {...props}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M6 18L18 6M6 6l12 12"
+      />
+    </svg>
   );
 };
